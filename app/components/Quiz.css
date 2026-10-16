@@ -1,0 +1,16 @@
+.correct{
+background-color:rgb(69, 177, 69);
+color:white;
+}
+
+.wrong{
+background-color:rgb(222, 72, 72);
+color:white;
+}
+
+.time-almostending{
+background-color:rgb(222, 72, 72);
+color:white;
+border: 3px solid rgb(17, 0, 255);
+
+}
