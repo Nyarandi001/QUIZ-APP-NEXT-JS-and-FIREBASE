@@ -128,7 +128,7 @@ const FetchQuizesByQuizId = async (quizId) => {
         })
 
          setShowUpdateLoader(false)
-        toast.success("Score Updated Successfully")
+      //  toast.success("Score Updated Successfully")
         resetQuiz()
         router.push("/user")
     }
