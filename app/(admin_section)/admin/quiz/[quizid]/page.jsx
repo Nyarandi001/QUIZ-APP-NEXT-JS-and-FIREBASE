@@ -11,11 +11,11 @@ import {
 } from "firebase/firestore";
 import { db } from "../../../../config/firebase.js";
 import { div } from "motion/react-client";
-
+const backend_URL="https://quiz-app-next-js-and-firebase.vercel.app/admin/api"
 async function QuizDetails({ params }) {
   const { quizid } = await params;
 
-  const response = await fetch("http://localhost:3000/admin/api", {
+  const response = await fetch(backend_URL, {
     cache: "no-store",
   });
 
@@ -51,9 +51,7 @@ async function QuizDetails({ params }) {
 
   const subquizes = await FetchQuizesByQuizId(quizid);
 
-  console.log("SUB QUIZES");
-  console.log(subquizes);
-
+  
   return (
     <div className="w-full max-w-full min-w-0 overflow-x-hidden">
       <div className="bg-blue-700 w-full text-center text-xl sm:text-2xl font-extrabold p-2 break-words">

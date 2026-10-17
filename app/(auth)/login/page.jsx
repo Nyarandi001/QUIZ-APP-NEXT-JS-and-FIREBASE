@@ -66,7 +66,7 @@ const Login = () => {
         ...doc.data(),
       };
     } catch (error) {
-      console.error("Error fetching user:", error);
+   toast.error("Error fetching user:", error);
       return null;
     }
   };
@@ -115,7 +115,7 @@ const Login = () => {
     catch (error) {
       setShowLoader(false)
       toast.error(error.message);
-      console.log(error.message)
+      
     }
   }
 

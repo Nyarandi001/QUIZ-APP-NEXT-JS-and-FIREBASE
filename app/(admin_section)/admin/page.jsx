@@ -7,16 +7,17 @@ import { useEffect, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 function AdminPage() {
   const [all_quizes, setAllQuizes] = useState([])
   const [quizes, setQuizes] = useState([])
   const [name, setName] = useState()
   const [id, setId] = useState()
-
+const backend_URL="/admin/api"
   useEffect(() => {
     async function FetchData() {
       try {
-        const response = await fetch("http://localhost:3000/admin/api", {
+        const response = await fetch(backend_URL, {
           cache: "no-store",
         });
 
@@ -38,7 +39,7 @@ function AdminPage() {
          const current_admin_quizes=all_fetched_quizes.filter(quiz=>quiz.creatorId===current_creator.userId)
         setQuizes(current_admin_quizes)
       } catch (error) {
-        console.error(error)
+       
         toast.error("Failed to load quizzes")
       }
     }
@@ -48,7 +49,7 @@ function AdminPage() {
 
   async function deleteQuiz(quizid) {
     try {
-      const response = await fetch("http://localhost:3000/admin/api", {
+      const response = await fetch(backend_URL, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

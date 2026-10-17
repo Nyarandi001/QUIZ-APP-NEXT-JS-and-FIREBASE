@@ -9,7 +9,7 @@ import { toast } from "react-toastify"
 import {collection, getDocs, query, where} from 'firebase/firestore';
 import { db } from "../config/firebase.js"
 function Quiz({quiz}){
-
+const backend_URL="/admin/api"
    
     const [index,setIndex]=useState(0)
       const [questions,setQuestions]=useState([])
@@ -17,6 +17,7 @@ function Quiz({quiz}){
 
     const [Result,setResult]=useState(false)
     const [score,setScore]=useState(0)
+    const scoreRef=useRef(0)
     const [locked,setLocked]=useState(false)
     const [startQuiz ,setStartQuiz]=useState(false)
     const [showUpdateLoader,setShowUpdateLoader]=useState(false)
@@ -68,7 +69,8 @@ const FetchQuizesByQuizId = async (quizId) => {
         }
         if(question.answer===choice){
             e.target.classList.add("correct")
-            setScore(s=>s + 1)
+            scoreRef.current += 1
+            setScore(scoreRef.current)
             setLocked(true)
         }
         else{
@@ -107,13 +109,17 @@ const FetchQuizesByQuizId = async (quizId) => {
 
     async function UpdateScores(){
         setShowUpdateLoader(true)
-        const final_score=`${score} out of ${questions.length} (${((score/questions.length) * 100).toFixed(2)}%)`
+        try{
+       const finalScore = scoreRef.current
+        const final_score =
+            `${finalScore} out of ${questions.length} ` +
+            `(${((finalScore / questions.length) * 100).toFixed(2)}%)`
         const userDetails=JSON.parse(localStorage.getItem("currentUser"))
         const userScore={userId:userDetails.userId,name:userDetails.name,score:final_score}
         const updated_quiz={...quiz,attempts: quiz.attempts + 1,results:[...quiz.results,userScore]}
-        console.log("UPDATED QUIZ")
-        console.log(updated_quiz)
-        const response = await fetch("http://localhost:3000/admin/api", {
+         console.log("UPDATED QUIZ")
+         console.log(updated_quiz)
+         const response = await fetch(backend_URL, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -122,19 +128,24 @@ const FetchQuizesByQuizId = async (quizId) => {
         })
 
          setShowUpdateLoader(false)
-       // toast.success("Score Updated Successfully")
+        toast.success("Score Updated Successfully")
         resetQuiz()
         router.push("/user")
     }
-
-    const resetQuiz=function(){
-        setScore(0)
-        setIndex(0)
-        setLocked(false)
-        setResult(false)
-        setStartQuiz(false)
-        timeRef.current?.classList.remove("time-almostending");
-        setRemainingTime("00:00:00");
+     catch (error) {
+    setShowUpdateLoader(false)
+    console.error("Error fetching quizzes:", error);
+    return null;
+  }}
+const resetQuiz=function(){
+         scoreRef.current = 0
+    setScore(0)
+    setIndex(0)
+    setLocked(false)
+    setResult(false)
+    setStartQuiz(false)
+    timeRef.current?.classList.remove("time-almostending")
+    setRemainingTime("00:00:00")
     }
 
     const startQuestions=()=>{
@@ -160,16 +171,13 @@ const FetchQuizesByQuizId = async (quizId) => {
             if(remainingFraction < 0.30 && remainingFraction > 0){
                timeRef.current?.classList.add("time-almostending");
             }
-            else if (remainingFraction <= 0) {
-                clearInterval(intervalId);
-                setRemainingTime("TIME UP")
-                setLocked(true)
-
-                setTimeout(() => {
-                    UpdateScores()
-                    setResult(true)
-                },3000);
-            }
+            else if (remainingTime2 <= 0) {
+             clearInterval(intervalId)
+            setRemainingTime("TIME UP")
+           setLocked(true)
+            setResult(true)
+            void UpdateScores()
+}
         }, 1000);
     }
 

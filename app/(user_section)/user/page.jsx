@@ -5,12 +5,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserQuiz from "../../components/UserQuiz";
 import { useEffect, useState } from "react";
+import LoadingLoader from "../../components/LoadingLoader";
 
 function HomePage({searchParams}) {
   const [all_quizes,setAllQuizes]=useState()
   const [quizes,setQuizes]=useState([])
   const  [id,SetId]=useState("")
   const  [name,SetName]=useState("")
+  const [showLoader,setShowLoader]=useState(true)
 
   useEffect(()=>{
 FetchRecords()
@@ -20,11 +22,13 @@ FetchRecords()
 
 async function FetchRecords(){
   //const { id, name } = await searchParams;
+  setShowLoader(true)
+  try{
   const userDetails=JSON.parse(localStorage.getItem("currentUser"))
-  
+  const backend_URL="/admin/api"
       SetId(userDetails.userId)
       SetName(userDetails.name)
-   const response = await fetch("http://localhost:3000/admin/api", {
+   const response = await fetch(backend_URL, {
     cache: "no-store",
   });
 
@@ -32,8 +36,15 @@ const all_fetched_quizes = await response.json();
  
   setAllQuizes(all_fetched_quizes)
   setQuizes(all_fetched_quizes)
-}
+  setShowLoader(false)
 
+}
+ catch (error) {
+    setShowLoader(false)
+    console.error("Error fetching records:", error);
+    return null;
+  }
+}
 
  function handleSearch(e){
 if(e.target.value===""){
@@ -45,14 +56,11 @@ setQuizes(filtered_quizes)
 
 }}
 
-
-  
-  
-
   return (
     <div className="min-h-screen bg-slate-100">
       <ToastContainer />
-      {/* ================= HEADER ================= */}
+      {showLoader ? <div><LoadingLoader title="Fetching Records" /></div> :(null)}
+     {showLoader ? (null):(
       <header className="bg-slate-600 text-white shadow-lg">
         <div className="mx-auto max-w-7xl px-6 py-6">
 
@@ -76,14 +84,14 @@ setQuizes(filtered_quizes)
         </div>
       </header>
 
+     )}
+      
+     {showLoader ? (null):( <main className="mx-auto max-w-7xl px-6 py-8">
 
-      {/* ================= MAIN CONTENT ================= */}
-      <main className="mx-auto max-w-7xl px-6 py-8">
-
-        {/* ================= STATS ================= */}
+      
         <div className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
-          {/* TOTAL QUIZZES */}
+         
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
 
             <div className="flex items-center justify-between">
@@ -174,9 +182,9 @@ setQuizes(filtered_quizes)
         )}
 
       </main>
-
+     )}
     </div>
-  );
+  )
 }
 
 export default HomePage;

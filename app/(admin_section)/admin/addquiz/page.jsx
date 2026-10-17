@@ -22,7 +22,7 @@ const [newQuizAnswer,setnewQuizAnswer]=useState("")
 const [addQuestion,setAddQuestion]=useState(false)
 const [creator,setCreator]=useState()
 const [showAddLoader,setShowAddLoader]=useState(false)
-
+const backend_URL="/admin/api"
 const router=useRouter()
  useEffect(()=>{
 const quiz1ID="QUIZ"+Date.now().toString();
@@ -92,7 +92,7 @@ async function createQuiz() {
       }).format(now);
 
   setShowAddLoader(true)
-  const response = await fetch("/admin/api", {
+  const response = await fetch(backend_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

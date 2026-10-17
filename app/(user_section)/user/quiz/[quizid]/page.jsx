@@ -17,7 +17,8 @@ import Quiz from '../../../../components/Quiz.jsx';
 
 async function QuizDetails({params}){
  const {quizid}=await params
-const response = await fetch("http://localhost:3000/admin/api", {
+ const backend_URL="https://quiz-app-next-js-and-firebase.vercel.app/admin/api"
+const response = await fetch(backend_URL, {
     cache: "no-store",
   });
 
